@@ -21,15 +21,15 @@ public class StudentDTO implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(name = "user_name")
-    String userName;
+    private String userName;
 
     @Column(name = "password")
-    String password;
+    private String password;
 
-    Role role;
+    private Role role;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
