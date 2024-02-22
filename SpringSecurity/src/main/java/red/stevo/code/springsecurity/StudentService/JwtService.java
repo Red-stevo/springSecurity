@@ -22,7 +22,7 @@ public class JwtService{
 
     /*This method enables us to get the subject from a jwtToken which
     * usually is the username*/
-    private String extractUserName(String jwtToken)
+    public String extractUserName(String jwtToken)
     {
         return extractClaim(jwtToken,Claims::getSubject);
     }
