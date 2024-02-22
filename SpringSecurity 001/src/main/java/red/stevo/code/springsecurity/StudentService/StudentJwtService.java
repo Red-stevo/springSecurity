@@ -1,12 +1,14 @@
 package red.stevo.code.springsecurity.StudentService;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.security.Key;
-import java.util.Base64;
+import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.function.Function;
 
 public class StudentJwtService {
 
@@ -22,9 +24,42 @@ public class StudentJwtService {
                 .compact();
     }
 
-    private Key getKey() {
+    private SecretKey getKey() {
         byte[] bytes = Decoders.BASE64URL.decode(SECRETE_KEY);
-
         return Keys.hmacShaKeyFor(bytes);
     }
+
+    public String getUserName(String jwtToken){
+     return getClaim(jwtToken, Claims::getSubject);
+    }
+
+    public Claims getAllClaims(String jwtToken){
+        return Jwts
+                .parser()
+                .decryptWith(getKey())
+                .build()
+                .parseSignedClaims(jwtToken)
+                .getPayload();
+    }
+
+    private <T> T getClaim(String jwtToken, Function<Claims, T> extractClaim)
+    {
+        Claims claims = getAllClaims(jwtToken);
+        return extractClaim.apply(claims);
+    }
+
+    private Boolean isValid(UserDetails userDetails, String jwtToken){
+        return userDetails.getUsername().equals(getUserName(jwtToken))
+                &&
+                !isExpired(jwtToken);
+    }
+
+    private boolean isExpired(String jwtToken) {
+
+        Date expirationDate = getClaim(jwtToken, Claims::getExpiration);
+
+        return expirationDate.after(new Date(System.currentTimeMillis()));
+    }
+
+
 }
