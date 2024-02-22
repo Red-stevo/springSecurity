@@ -81,7 +81,7 @@ public class JwtService{
                 .compact();
     }
 
-    /*This method takes in the Base 64 encoded string decodes it and forwards it for encryption
+    /*This method takes in the Base 64 encoded string, decodes it and forwards it for encryption
     * to generate a key.*/
     private SecretKey getKey() {
         byte[] keyByte = Decoders.BASE64URL.decode(SECRETE_KEY);
