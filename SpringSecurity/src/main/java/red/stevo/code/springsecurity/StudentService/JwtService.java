@@ -40,7 +40,7 @@ public class JwtService{
 
 
     /*Method to check whether the jwt token is expired*/
-    public Boolean isExpired(String jwtToken){
+    private Boolean isExpired(String jwtToken){
         return getExpirationDate(jwtToken).after(new Date(System.currentTimeMillis()));
     }
 
