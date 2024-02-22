@@ -11,13 +11,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import red.stevo.code.springsecurity.StudentService.JwtService;
 
 import java.io.IOException;
-import java.net.PasswordAuthentication;
 
 @Component
 @Slf4j
@@ -25,11 +24,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
-    //UserDetails userDetails;
-
     private final UserDetailsService userDetailsService;
     @Autowired
-    public JwtAuthenticationFilter(JwtService jwtService, UserDetails userDetails,
+    public JwtAuthenticationFilter(JwtService jwtService,
                                    UserDetailsService userDetailsService)
     {
         this.jwtService = jwtService;
@@ -69,8 +66,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         null,
                         userDetails.getAuthorities()
                 );
-            }
 
+                token.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
+
+                SecurityContextHolder.getContext().setAuthentication(token);
+            }
+            filterChain.doFilter(request,response);
         }
     }
 }
