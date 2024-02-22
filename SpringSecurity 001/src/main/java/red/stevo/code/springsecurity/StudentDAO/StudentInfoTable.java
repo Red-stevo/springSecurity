@@ -1,5 +1,4 @@
-package red.stevo.code.springsecurity.SchoolDTO;
-
+package red.stevo.code.springsecurity.StudentDAO;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,36 +8,47 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import red.stevo.code.springsecurity.Models.Role;
 
 import java.util.Collection;
 import java.util.List;
 
-@Entity
-@Table(name = "students_info")
-@Data
+@Component
 @AllArgsConstructor
 @NoArgsConstructor
-@Component
-public class StudentDTO implements UserDetails {
+@Data
+@Entity
+@Table(name = "student_info_table")
+public class StudentInfoTable implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "password")
-    private String password;
+    @Column(name = "user_password")
+    private String userPassword;
 
+    @Column(name = "role")
     private Role role;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
-    public String getUsername() { return this.userName; }
+    public String getPassword() {
+        return this.userPassword;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.userName;
+    }
 
     @Override
     public boolean isAccountNonExpired() {
