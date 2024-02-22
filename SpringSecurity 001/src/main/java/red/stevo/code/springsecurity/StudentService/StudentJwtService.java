@@ -5,11 +5,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.function.Function;
 
+@Service
 public class StudentJwtService {
 
     private final String SECRETE_KEY = "6ce44ec4abc6a0e80dd954e30562f93e9bbe5baae71af990e08e56e046d35e19";
@@ -48,7 +50,7 @@ public class StudentJwtService {
         return extractClaim.apply(claims);
     }
 
-    private Boolean isValid(UserDetails userDetails, String jwtToken){
+    public Boolean isValid(UserDetails userDetails, String jwtToken){
         return userDetails.getUsername().equals(getUserName(jwtToken))
                 &&
                 !isExpired(jwtToken);
