@@ -31,6 +31,7 @@ public class StudentDTO implements UserDetails {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "role")
     private Role role;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
