@@ -30,16 +30,14 @@ public class StudentSecurityConfig {
     {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                        req -> req
-                                .requestMatchers("/api/v0/login", "/api/v0/register")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/api/v0/login/**", "/api/v0/register/**")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .userDetailsService(userDetailsService)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy
-                                .STATELESS))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
