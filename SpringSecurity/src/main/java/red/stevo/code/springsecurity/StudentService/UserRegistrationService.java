@@ -1,5 +1,6 @@
 package red.stevo.code.springsecurity.StudentService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,7 @@ import red.stevo.code.springsecurity.SchoolDTO.StudentDTO;
 import red.stevo.code.springsecurity.SchoolRepo.StudentRepository;
 
 @Service
+@Slf4j
 public class UserRegistrationService {
 
     private final StudentRepository studentRepository;
@@ -34,16 +36,20 @@ public class UserRegistrationService {
 
     public AuthenticationResponse registerUser(StudentDTO request)
     {
+
+        log.info("Forwarded the register user request.");
         StudentDTO studentDTO = new StudentDTO();
 
         studentDTO.setUserName(request.getUsername());
         studentDTO.setPassword(passwordEncoder.encode(request.getPassword()));
         studentDTO.setRole(studentDTO.getRole());
 
+        log.info("saving user to the database");
         studentRepository.save(studentDTO);
 
         /*generation the jwt token*/
 
+        log.info("processing the response");
         String  jwtToken = jwtService.generateJwtToken(studentDTO);
 
         return new AuthenticationResponse(jwtToken);
