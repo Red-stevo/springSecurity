@@ -2,7 +2,6 @@ package red.stevo.code.springsecurity.BeanConfiguration;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -19,7 +18,9 @@ import red.stevo.code.springsecurity.Filters.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+
 public class StudentSecurityConfig {
+
 
     private final UserDetailsService userDetailsService;
 
@@ -27,18 +28,13 @@ public class StudentSecurityConfig {
 
     @Autowired
     public StudentSecurityConfig(
-            UserDetailsService userDetailsService,
-            JwtAuthenticationFilter jwtAuthenticationFilter) {
+            UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
 
-    /*Configuring the security filter chain*/
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity httpSecurity)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
@@ -48,23 +44,17 @@ public class StudentSecurityConfig {
                         .authenticated())
                 .userDetailsService(userDetailsService)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy
-                                .STATELESS))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-    /*Configuring password encryption*/
-    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config)
-            throws Exception {
-        return config.getAuthenticationManager();
+            AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
-
-
 }
