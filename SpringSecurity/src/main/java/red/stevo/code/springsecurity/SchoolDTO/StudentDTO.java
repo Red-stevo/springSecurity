@@ -2,9 +2,7 @@ package red.stevo.code.springsecurity.SchoolDTO;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Component
+@ToString
 public class StudentDTO implements UserDetails {
 
     @Id
@@ -31,6 +30,7 @@ public class StudentDTO implements UserDetails {
     @Column(name = "password")
     private String password;
 
+    @Setter
     @Column(name = "role")
     private Role role;
     @Override

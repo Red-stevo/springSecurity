@@ -38,6 +38,7 @@ public class UserRegistrationController {
     public ResponseEntity<AuthenticationResponse> loginUser(
             @RequestBody LoginModel loginModel
             ){
+        log.info("Received a request for user login");
         return new ResponseEntity<>(userRegistrationService.userLogin(loginModel), HttpStatus.OK);
     }
 

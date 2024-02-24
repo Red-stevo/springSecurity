@@ -3,8 +3,8 @@ package red.stevo.code.springsecurity.StudentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import red.stevo.code.springsecurity.SchoolDTO.AuthenticationResponse;
@@ -42,7 +42,7 @@ public class UserRegistrationService {
 
         studentDTO.setUserName(request.getUsername());
         studentDTO.setPassword(passwordEncoder.encode(request.getPassword()));
-        studentDTO.setRole(studentDTO.getRole());
+        studentDTO.setRole(request.getRole());
 
         log.info("saving user to the database");
         studentRepository.save(studentDTO);
@@ -57,19 +57,31 @@ public class UserRegistrationService {
 
     public AuthenticationResponse userLogin(LoginModel loginModel)
     {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginModel.getUsername(),
-                        loginModel.getPassword()
-                )
-        );
+        log.info("Forwarded the request to login the user");
 
-        StudentDTO studentDTO = studentRepository.findByUserName(loginModel.getUsername()).orElseThrow(
-                () -> new UsernameNotFoundException("User was no found")
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginModel.getUsername(),
+                            loginModel.getPassword()
+                    )
+            );
+        }catch (BadCredentialsException e) {
+            log.error("Wrong USer Credentials");
+            throw e;
+        }
 
+
+        log.info("Getting the user by username");
+        StudentDTO studentDTO = studentRepository.findByUserName(loginModel.getUsername()).orElseThrow();
+
+
+        System.out.println(studentDTO);
+
+        log.info("Generating the JWT Token");
         String jwtToken = jwtService.generateJwtToken(studentDTO);
 
+        log.info("processing user response");
         return new AuthenticationResponse(jwtToken);
     }
 
