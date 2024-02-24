@@ -1,25 +1,50 @@
 package red.stevo.code.springsecurity.AppDTO;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import red.stevo.code.springsecurity.AppModels.Role;
 
 import java.util.Collection;
 import java.util.List;
 
+
+@Entity
+@Table(name = "student_registration")
+@Data
+@Component
+@AllArgsConstructor
+@NoArgsConstructor
 public class StudentDTO implements UserDetails {
 
-    String username;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-    String password;
+    @Column(unique = true)
+    private String username;
 
-    Role role;
+    private String password;
+
+    private Role role;
+
+
+    public StudentDTO(StudentDTO studentDTO)
+    {
+        this.id = studentDTO.getId();
+        this.username = studentDTO.getUsername();
+        this.password = studentDTO.getPassword();
+        this.role = studentDTO.getRole();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        role = new Role();
-        return List.of(new SimpleGrantedAuthority(role.getROLE1()), new SimpleGrantedAuthority(role.getROLE1()));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
@@ -51,4 +76,5 @@ public class StudentDTO implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

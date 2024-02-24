@@ -4,12 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Role {
 
-    private  final String ROLE1 = "ADMIN";
+public enum Role {
 
-    private  final  String ROLE2 = "USER";
+    ADMIN,
+
+    USER
 }
