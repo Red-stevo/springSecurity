@@ -1,6 +1,8 @@
 package red.stevo.code.springsecurity.ServiceLayer;
 
 import io.jsonwebtoken.Claims;
+import org.springframework.security.config.annotation.authentication.configurers.provisioning.UserDetailsManagerConfigurer;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
 import java.util.function.Function;
@@ -13,7 +15,7 @@ public interface JwtService {
 
     <T> T extractClaim(String jwtToken, Function<Claims, T> resolveClaim);
 
-    Boolean isValid(String username, String jwtToken);
+    Boolean isValid(String jwtToken, UserDetails userDetails);
 
     Boolean isExpired(String jwtToken);
 
