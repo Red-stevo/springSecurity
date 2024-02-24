@@ -1,4 +1,4 @@
-package red.stevo.code.springsecurity;
+package red.stevo.code.springsecurity.ServiceLayer;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
