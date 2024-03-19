@@ -17,7 +17,7 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity()
 public class SecurityConfig {
 
     private final AuthenticationService authenticationService;
@@ -26,7 +26,6 @@ public class SecurityConfig {
     public SecurityConfig(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -41,7 +40,6 @@ public class SecurityConfig {
                 ).userDetailsService(authenticationService)
                 .build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
