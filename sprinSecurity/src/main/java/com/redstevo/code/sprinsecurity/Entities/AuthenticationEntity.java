@@ -73,7 +73,6 @@ public class AuthenticationEntity implements UserDetails {
         return this;
     }
 
-    public AuthenticationEntity build(){
-        return this;
+    public void build(){
     }
 }
