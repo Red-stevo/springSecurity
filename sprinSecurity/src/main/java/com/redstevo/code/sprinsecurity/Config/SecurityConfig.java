@@ -1,5 +1,6 @@
 package com.redstevo.code.sprinsecurity.Config;
 
+import com.redstevo.code.sprinsecurity.Services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,14 +20,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public SecurityConfig(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
-
-    @Autowired
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -39,7 +38,7 @@ public class SecurityConfig {
                         .authenticated()
                 ).sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).userDetailsService(userDetailsService)
+                ).userDetailsService(authenticationService)
                 .build();
     }
 

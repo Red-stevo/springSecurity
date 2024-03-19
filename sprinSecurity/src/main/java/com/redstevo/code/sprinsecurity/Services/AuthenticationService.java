@@ -1,9 +1,13 @@
 package com.redstevo.code.sprinsecurity.Services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.stereotype.Service;
 
+@Service
+@Slf4j
 public class AuthenticationService implements UserDetailsManager {
     @Override
     public void createUser(UserDetails user) {
