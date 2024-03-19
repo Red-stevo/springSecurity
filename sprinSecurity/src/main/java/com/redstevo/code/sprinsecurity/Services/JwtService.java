@@ -54,7 +54,7 @@ public class JwtService {
     }
 
     public Boolean isValid(UserDetails userDetails, String jwt){
-        return isExpired(jwt);
+        return !isExpired(jwt) && getUsername(jwt).equals(userDetails.getUsername());
     }
 
     private Date getExpiration(String jwt){
@@ -62,7 +62,7 @@ public class JwtService {
     }
 
     private Boolean isExpired(String jwt){
-        return new  Date(System.currentTimeMillis()).before(getExpiration(jwt));
+        return new  Date(System.currentTimeMillis()).after(getExpiration(jwt));
     }
 
 }
