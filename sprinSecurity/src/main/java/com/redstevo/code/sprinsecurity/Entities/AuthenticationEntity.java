@@ -57,4 +57,23 @@ public class AuthenticationEntity implements UserDetails {
     public boolean isEnabled() {
         return false;
     }
+
+    public AuthenticationEntity setUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public AuthenticationEntity setPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public AuthenticationEntity setRole(GrantedAuthority role) {
+        this.role = role;
+        return this;
+    }
+
+    public AuthenticationEntity build(){
+        return this;
+    }
 }
