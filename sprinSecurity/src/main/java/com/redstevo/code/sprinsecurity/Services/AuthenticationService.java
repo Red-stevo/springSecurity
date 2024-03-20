@@ -2,11 +2,14 @@ package com.redstevo.code.sprinsecurity.Services;
 
 import com.redstevo.code.sprinsecurity.CustomExceptions.UserExistException;
 import com.redstevo.code.sprinsecurity.Entities.AuthenticationEntity;
+import com.redstevo.code.sprinsecurity.Entities.Tokens;
 import com.redstevo.code.sprinsecurity.Models.AuthenticationRequestModel;
 import com.redstevo.code.sprinsecurity.Models.AuthenticationResponseModel;
 import com.redstevo.code.sprinsecurity.Repositories.AuthenticationRepository;
+import com.redstevo.code.sprinsecurity.Repositories.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +28,12 @@ public class AuthenticationService implements UserDetailsManager {
 
     private final JwtService jwtService;
 
+    private final TokenRepository tokenRepository;
+
     private AuthenticationResponseModel authenticationResponseModel;
+
+
+
     public ResponseEntity<AuthenticationResponseModel> register(AuthenticationRequestModel authenticationRequestModel){
 
         log.info("Processing the request");
@@ -55,19 +63,27 @@ public class AuthenticationService implements UserDetailsManager {
         String token = generateToken(authenticationEntity);
 
         /*Store the generated token*/
-
+        storeToken(token, authenticationEntity);
 
         //prepare the user response
-        authenticationRequestModel = new AuthenticationRequestModel();
+        authenticationResponseModel = new AuthenticationResponseModel();
         authenticationResponseModel.setJwt(token);
         authenticationResponseModel.setUsername(authenticationEntity.getUsername());
         authenticationResponseModel.setMessage("Sing Up Successful");
         authenticationResponseModel.setUserId(authenticationEntity.getId());
 
+
+        return new ResponseEntity<>(authenticationResponseModel, HttpStatus.CREATED);
     }
 
     private void storeToken(String token, AuthenticationEntity authenticationEntity){
+        Tokens tokens = new Tokens();
 
+        tokens.setIsLoggedOut(false);
+        tokens.setAuthentication(authenticationEntity);
+        tokens.setToken(token);
+
+        tokenRepository.save(tokens);
     }
 
     private String generateToken(AuthenticationEntity authentication){
@@ -83,7 +99,8 @@ public class AuthenticationService implements UserDetailsManager {
 
     @Override
     public void createUser(UserDetails user) {
-
+        authenticationRepository.save(user);
+        log.info("User Saved Successfully");
     }
 
     @Override
@@ -103,7 +120,7 @@ public class AuthenticationService implements UserDetailsManager {
 
     @Override
     public boolean userExists(String username) {
-        return false;
+        return authenticationRepository.findByUsername(username).isPresent();
     }
 
     @Override
