@@ -5,8 +5,6 @@ import com.redstevo.code.sprinsecurity.Entities.AuthenticationEntity;
 import com.redstevo.code.sprinsecurity.Models.AuthenticationRequestModel;
 import com.redstevo.code.sprinsecurity.Models.AuthenticationResponseModel;
 import com.redstevo.code.sprinsecurity.Repositories.AuthenticationRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +13,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -22,8 +23,16 @@ public class AuthenticationService implements UserDetailsManager {
 
     private final AuthenticationRepository authenticationRepository;
 
+    private final JwtService jwtService;
+
     private AuthenticationResponseModel authenticationResponseModel;
     public ResponseEntity<AuthenticationResponseModel> register(AuthenticationRequestModel authenticationRequestModel){
+
+        log.info("Processing the request");
+        /*Check if the Username is already used*/
+        if(userExists(authenticationRequestModel.getUsername())){
+          throw  new UserExistException("Username is Already Used");
+        }
 
         //setting up the userDetails object.
         AuthenticationEntity authentication = new AuthenticationEntity();
@@ -32,10 +41,7 @@ public class AuthenticationService implements UserDetailsManager {
                 .setPassword(authenticationRequestModel.getPassword())
                 .setRole(authentication.getRole())
                 .build();
-        /*Check if the Username is already used*/
-        if(userExists(authenticationRequestModel.getUsername())){
-          throw  new UserExistException("Username is Already Used");
-        }
+
 
         //forwarding the request to the service layer.
         createUser(authentication);
@@ -45,14 +51,36 @@ public class AuthenticationService implements UserDetailsManager {
                 authenticationRepository.findByUsername(authentication.getUsername()).orElseThrow(
                         () -> new UsernameNotFoundException("User Not Found")
                 );
+        /*Generating a token for the user.*/
+        String token = generateToken(authenticationEntity);
+
+        /*Store the generated token*/
+
+
         //prepare the user response
         authenticationRequestModel = new AuthenticationRequestModel();
-        authenticationResponseModel.setJwt();
+        authenticationResponseModel.setJwt(token);
         authenticationResponseModel.setUsername(authenticationEntity.getUsername());
         authenticationResponseModel.setMessage("Sing Up Successful");
         authenticationResponseModel.setUserId(authenticationEntity.getId());
 
     }
+
+    private void storeToken(String token, AuthenticationEntity authenticationEntity){
+
+    }
+
+    private String generateToken(AuthenticationEntity authentication){
+        Map<String, Object> claims = new HashMap<>(2);
+
+        /*Adding the claim for token generation*/
+        claims.put("id", authentication.getId());
+        claims.put("role", authentication.getRole());
+
+        /*Calling method for token generation*/
+        return jwtService.generateToken(authentication.getUsername(), claims);
+    }
+
     @Override
     public void createUser(UserDetails user) {
 
