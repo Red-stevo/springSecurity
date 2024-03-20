@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface TokenRepository extends CrudRepository<Tokens, Long> {
 
     Optional<List<Tokens>> findByTokenAndIsLoggedOut(String token, Boolean isLoggedOut);
+
+    Optional<Tokens> findByToken(String token);
 }
