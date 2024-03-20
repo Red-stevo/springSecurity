@@ -33,6 +33,9 @@ public class AuthenticationEntity implements UserDetails {
     @NotNull
     private GrantedAuthority role;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "authentication")
+    private List<Tokens> tokens;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("user"));

@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import java.lang.reflect.Field;
 
@@ -28,6 +29,8 @@ import java.lang.reflect.Field;
 public class SecurityConfig {
 
     private final AuthenticationService authenticationService;
+
+    private final LogoutHandler logoutHandler;
 
     private final JwtFilter jwtFilter;
     @Bean
@@ -42,7 +45,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ).userDetailsService(authenticationService)
                 .logout(logout -> logout
-                        .addLogoutHandler()
+                        .addLogoutHandler(logoutHandler)
                         .logoutSuccessHandler( ((request, response, authentication) -> {
                             SecurityContextHolder.clearContext();
                         })))
