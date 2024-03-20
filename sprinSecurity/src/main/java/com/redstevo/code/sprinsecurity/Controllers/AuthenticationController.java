@@ -27,19 +27,7 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponseModel> registerUser(
            @Validated @RequestBody AuthenticationRequestModel authenticationRequestModel
             ){
-        //setting up the userDetails object.
-        AuthenticationEntity authentication = new AuthenticationEntity();
-        authentication
-                .setUsername(authenticationRequestModel.getUsername())
-                .setPassword(authenticationRequestModel.getPassword())
-                .setRole(authentication.getRole())
-                .build();
-
-        //forwarding the request to the service layer.
-        authenticationService.createUser(authentication);
-
-        //prepare the user response
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
+            log.info("Request to register a user.");
+        return authenticationService.register(authenticationRequestModel);
     }
 }
