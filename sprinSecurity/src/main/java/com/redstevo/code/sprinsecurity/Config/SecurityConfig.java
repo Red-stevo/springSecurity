@@ -50,10 +50,6 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public AuthenticationManager manager(AuthenticationConfiguration configuration) throws Exception {

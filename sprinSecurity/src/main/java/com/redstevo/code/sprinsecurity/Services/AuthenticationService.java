@@ -9,10 +9,12 @@ import com.redstevo.code.sprinsecurity.Repositories.AuthenticationRepository;
 import com.redstevo.code.sprinsecurity.Repositories.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,7 @@ public class AuthenticationService implements UserDetailsManager {
 
     private AuthenticationResponseModel authenticationResponseModel;
 
+    private final PasswordEncoder passwordEncoder;
 
 
     public ResponseEntity<AuthenticationResponseModel> register(AuthenticationRequestModel authenticationRequestModel){
@@ -42,12 +45,13 @@ public class AuthenticationService implements UserDetailsManager {
           throw  new UserExistException("Username is Already Used");
         }
 
+
         //setting up the userDetails object.
         AuthenticationEntity authentication = new AuthenticationEntity();
         authentication
                 .setUsername(authenticationRequestModel.getUsername())
-                .setPassword(authenticationRequestModel.getPassword())
-                .setRole(authentication.getRole())
+                .setPassword(passwordEncoder.encode(authenticationRequestModel.getPassword()))
+                .setRole(authenticationRequestModel.getRole())
                 .build();
 
 
